@@ -1,8 +1,10 @@
 package cmd
 
 import (
+	"log"
 	"os"
 
+	"github.com/nullsploit01/cc-calculator/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -16,7 +18,15 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 
-	Run: func(cmd *cobra.Command, args []string) {},
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			cmd.PrintErr("Please provide an expression")
+			cmd.Usage()
+			return
+		}
+		calculator := internal.NewCalculator(args[0])
+		log.Println(calculator.Tokens)
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
