@@ -8,14 +8,15 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "cccalc",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Use:   "cccalc 'expression'",
+	Short: "CCCalc is a CLI calculator capable of parsing and evaluating complex arithmetic expressions.",
+	Long: `CCCalc is a command-line calculator designed to efficiently evaluate arithmetic expressions including nested operations and standard mathematical functions.
+			For example, you can use CCCalc to calculate expressions like:
+				cccalc "5 + 2 * (3 - 1)"
+				cccalc "10 / 2 + 3 * (2 + 1)"
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+			The calculator supports basic operations such as addition (+), subtraction (-), multiplication (*), and division (/). 
+			It is designed to handle errors such as division by zero gracefully and ensures that the order of operations is correctly followed.`,
 
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
@@ -30,15 +31,9 @@ to quickly create a Cobra application.`,
 	},
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
 	}
-}
-
-func init() {
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
