@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 	"unicode"
@@ -84,11 +85,16 @@ func (c *Calculator) Calculate() float64 {
 	process := func(p int) {
 		for len(ops) > 0 {
 			topOp := ops[len(ops)-1]
+			// Only process if the current operator has higher or equal precedence
 			if precedence(topOp) < p {
 				break
 			}
-
 			ops = ops[:len(ops)-1]
+
+			if len(values) < 2 {
+				fmt.Println("Error: insufficient values in stack for operation")
+				return // Exit or handle error
+			}
 
 			b := values[len(values)-1]
 			values = values[:len(values)-1]
@@ -98,19 +104,36 @@ func (c *Calculator) Calculate() float64 {
 	}
 
 	for _, token := range c.Tokens {
-		if token == "(" {
+		op, err := strconv.ParseFloat(token, 64)
+		isNumber := err == nil
+
+		switch {
+		case token == "(":
 			ops = append(ops, '(')
-		} else if token == ")" {
-			process(0)
-			ops = ops[:len(ops)-1]
-		} else if op, err := strconv.ParseFloat(token, 64); err == nil {
+		case token == ")":
+			for len(ops) > 0 && ops[len(ops)-1] != '(' {
+				process(precedence(ops[len(ops)-1]))
+			}
+			if len(ops) == 0 {
+				fmt.Println("Error: no matching '(' for ')'")
+				return 0
+			}
+			ops = ops[:len(ops)-1] // Pop the '('
+		case isNumber:
 			values = append(values, op)
-		} else if op := rune(token[0]); precedence(op) > 0 {
-			process(precedence(op))
-			ops = append(ops, op)
+		default:
+			if len(ops) > 0 && precedence(rune(token[0])) <= precedence(ops[len(ops)-1]) {
+				process(precedence(rune(token[0])))
+			}
+			ops = append(ops, rune(token[0]))
 		}
 	}
 
 	process(0)
+
+	if len(values) != 1 {
+		fmt.Println("Error: invalid calculation")
+		return 0
+	}
 	return values[0]
 }
