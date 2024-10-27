@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"log"
 	"os"
 
 	"github.com/nullsploit01/cc-calculator/internal"
@@ -25,7 +24,9 @@ to quickly create a Cobra application.`,
 			return
 		}
 		calculator := internal.NewCalculator(args[0])
-		log.Println(calculator.Tokens)
+		result := calculator.Calculate()
+
+		cmd.Println(result)
 	},
 }
 
